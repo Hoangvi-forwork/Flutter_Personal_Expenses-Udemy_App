@@ -9,36 +9,34 @@ class TransactionList extends StatelessWidget {
       {super.key, required this.deleteItem});
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       child: transactions.isEmpty
-          ? Column(
-              // ignore: prefer_const_literals_to_create_immutables
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                  child: Container(
+          ? LayoutBuilder(builder: (context, constraint) {
+              return Column(
+                // ignore: prefer_const_literals_to_create_immutables
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
                     margin: const EdgeInsets.all(24),
-                    height: 200,
-                    width: 200,
+                    height: constraint.maxHeight * .4,
+                    // width: 200,
                     child: Image.asset('assets/icons/empty-box.png',
                         fit: BoxFit.cover),
                   ),
-                ),
-                Center(
-                  child: Container(
-                    margin: const EdgeInsets.all(16),
-                    child: const Text(
-                      'No transaction added yet!',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 24,
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.all(16),
+                      child: Text(
+                        'No transaction added yet!',
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                     ),
                   ),
-                ),
-              ],
-            )
+                ],
+              );
+            })
           : SizedBox(
               height: 550,
               child: ListView.builder(
@@ -65,12 +63,19 @@ class TransactionList extends StatelessWidget {
                       subtitle: Text(
                         DateFormat.yMMMMd().format(transactions[index].date),
                       ),
-                      trailing: IconButton(
-                        onPressed: () => deleteItem(transactions[index].id),
-                        icon: const Icon(
-                          Icons.delete,
-                        ),
-                      ),
+                      trailing: size.width > 460
+                          ? ElevatedButton(
+                              onPressed: () =>
+                                  deleteItem(transactions[index].id),
+                              child: const Text("Delete"),
+                            )
+                          : IconButton(
+                              onPressed: () =>
+                                  deleteItem(transactions[index].id),
+                              icon: const Icon(
+                                Icons.delete,
+                              ),
+                            ),
                     ),
                   );
                 }),
